@@ -59,6 +59,7 @@ MACROUTILS.createPrototypeObject( Variable, MACROUTILS.objectInherit( Node.proto
     }
 } ), 'osgShader', 'Variable' );
 
+
 // Constant Variable
 // help glsl compiler and make sure no one writes in it :)
 var Constant = function ( type, prefix ) {
@@ -71,6 +72,7 @@ MACROUTILS.createPrototypeObject( Constant, MACROUTILS.objectInherit( Variable.p
         return sprintf( 'const %s %s = %s;', [ this._type, this.getVariable(), this._value ] );
     }
 } ), 'osgShader', 'Constant' );
+
 
 var Uniform = function ( type, prefix, size ) {
     Variable.call( this, type, prefix );
@@ -91,6 +93,7 @@ MACROUTILS.createPrototypeObject( Uniform, MACROUTILS.objectInherit( Variable.pr
     }
 
 } ), 'osgShader', 'Uniform' );
+
 
 // Vertex Attribute Variables
 var Attribute = function ( type, prefix ) {
@@ -139,6 +142,7 @@ MACROUTILS.createPrototypeObject( Sampler, MACROUTILS.objectInherit( Variable.pr
 
 } ), 'osgShader', 'Sampler' );
 
+
 // Graph Root Node Abstract Class
 // Derive from that for new outputs
 // gl_FragDepth, etc.
@@ -159,6 +163,7 @@ MACROUTILS.createPrototypeObject( Output, MACROUTILS.objectInherit( Variable.pro
     }
 } ), 'osgShader', 'Output' );
 
+
 // Graph Root Nodes
 var glFragColor = function () {
     Output.call( this, 'vec4', 'gl_FragColor' );
@@ -166,6 +171,7 @@ var glFragColor = function () {
 };
 
 MACROUTILS.createPrototypeObject( glFragColor, MACROUTILS.objectInherit( Output.prototype, {} ), 'osgShader', 'glFragColor' );
+
 
 var glPosition = function () {
     Output.call( this, 'vec4', 'gl_Position' );
@@ -182,6 +188,24 @@ var glPointSize = function () {
 
 MACROUTILS.createPrototypeObject( glPointSize, MACROUTILS.objectInherit( Output.prototype, {} ), 'osgShader', 'glPointSize' );
 
+
+var Define = function ( name ) {
+    Node.call( this );
+    this._defineName = name;
+    this._defineValue = '';
+};
+MACROUTILS.createPrototypeObject( Define, MACROUTILS.objectInherit( Node.prototype, {
+    type: 'Define',
+    setValue: function ( value ) {
+        this._defineValue = value;
+        return this;
+    },
+    getDefines: function () {
+        return [ '#define ' + this._defineName + ' ' + this._defineValue ];
+    }
+} ), 'osgShader', 'Define' );
+
+
 module.exports = {
     Output: Output,
     glPointSize: glPointSize,
@@ -192,5 +216,6 @@ module.exports = {
     Constant: Constant,
     Attribute: Attribute,
     Varying: Varying,
-    Uniform: Uniform
+    Uniform: Uniform,
+    Define: Define
 };

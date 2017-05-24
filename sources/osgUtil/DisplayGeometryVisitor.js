@@ -41,7 +41,7 @@ MACROUTILS.createPrototypeObject( CompilerColorGeometry, MACROUTILS.objectInheri
             color: this.getOrCreateUniform( 'vec3', 'uColorDebug' ),
             alpha: this.createVariable( 'float' ).setValue( '1.0' )
         } ).outputs( {
-            color: frag
+            result: frag
         } );
 
         return [ frag ];
@@ -82,7 +82,7 @@ MACROUTILS.createPrototypeObject( CompilerColorSkinning, MACROUTILS.objectInheri
             color: this.getOrCreateVarying( 'vec3', 'vBonesColor' ),
             alpha: this.createVariable( 'float' ).setValue( '1.0' )
         } ).outputs( {
-            color: frag
+            result: frag
         } );
 
         return [ frag ];

@@ -40,7 +40,7 @@ MACROUTILS.createPrototypeObject( CompilerOffsetNormal, MACROUTILS.objectInherit
             color: this.getOrCreateUniform( 'vec3', 'uColorDebug' ),
             alpha: this.createVariable( 'float' ).setValue( '1.0' )
         } ).outputs( {
-            color: frag
+            result: frag
         } );
 
         return [ frag ];

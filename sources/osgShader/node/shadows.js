@@ -24,7 +24,7 @@ MACROUTILS.createPrototypeObject( ShadowReceive, MACROUTILS.objectInherit( Node.
         'shadowBias'
         // 'shadowNormalBias'
     ],
-    validOutputs: [ 'float' ],
+    validOutputs: [ 'float' /*, 'outDistance'*/ ],
 
     globalFunctionDeclaration: function () {
         return '#pragma include "shadowsReceive.glsl"';
@@ -38,11 +38,15 @@ MACROUTILS.createPrototypeObject( ShadowReceive, MACROUTILS.objectInherit( Node.
     // must return an array of defines
     // because it will be passed to the ShaderGenerator
     getDefines: function () {
-        return this._shadow.getDefines();
+        var defines = this._shadow.getDefines();
+        if ( this._outputs.outDistance ) defines.push( '#define _OUT_DISTANCE' );
+        return defines;
     },
+
     getExtensions: function () {
-        return this._shadow.getExtensions();
+        return [ '#extension GL_OES_standard_derivatives : enable' ];
     },
+
     computeShader: function () {
 
         var inp = this._inputs;
@@ -53,7 +57,7 @@ MACROUTILS.createPrototypeObject( ShadowReceive, MACROUTILS.objectInherit( Node.
             inp.shadowTexture
         ];
 
-        if ( this._shadow.getAtlas() ) {
+        if ( inp.shadowTextureMapSize ) {
             inputs.push( inp.shadowTextureMapSize );
         }
 
@@ -67,8 +71,12 @@ MACROUTILS.createPrototypeObject( ShadowReceive, MACROUTILS.objectInherit( Node.
             inp.shadowBias
         ] );
 
-        if ( this._shadow.getNormalBias() ) {
+        if ( inp.shadowNormalBias ) {
             inputs.push( inp.shadowNormalBias );
+        }
+
+        if ( this._outputs.outDistance ) {
+            inputs.push( this._outputs.outDistance );
         }
 
         return ShaderUtils.callFunction( 'computeShadow', this._outputs.float, inputs );
@@ -76,40 +84,6 @@ MACROUTILS.createPrototypeObject( ShadowReceive, MACROUTILS.objectInherit( Node.
 
 } ), 'osgShader', 'ShadowReceive' );
 
-var ShadowCast = function () {
-    Node.call( this );
-
-};
-
-MACROUTILS.createPrototypeObject( ShadowCast, MACROUTILS.objectInherit( Node.prototype, {
-
-    type: 'ShadowCast',
-    validInputs: [ 'shadowDepthRange', 'fragEye' ],
-    validOutputs: [ 'color' ],
-
-    globalFunctionDeclaration: function () {
-        return '#pragma include "shadowsCastFrag.glsl"';
-    },
-
-    setShadowCastAttribute: function ( shadowAttr ) {
-        this._shadowCast = shadowAttr;
-        return this;
-    },
-
-    // must return an array of defines
-    // because it will be passed to the ShaderGenerator
-    getDefines: function () {
-        return this._shadowCast.getDefines();
-    },
-
-    computeShader: function () {
-        var inp = this._inputs;
-        return ShaderUtils.callFunction( 'computeShadowDepth', this._outputs.color, [ inp.fragEye, inp.shadowDepthRange ] );
-    }
-
-} ), 'osgShader', 'ShadowCast' );
-
 module.exports = {
-    ShadowCast: ShadowCast,
     ShadowReceive: ShadowReceive
 };

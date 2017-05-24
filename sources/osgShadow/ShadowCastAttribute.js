@@ -23,7 +23,6 @@ MACROUTILS.createPrototypeStateAttribute( ShadowCastAttribute, MACROUTILS.object
         return this._shadowReceiveAttribute;
     },
     getDefines: function () {
-        if ( !this._shadowReceiveAttribute ) return undefined; // test here because of cloneType
         return this._shadowReceiveAttribute.getDefines();
     },
     _computeHash: function () {

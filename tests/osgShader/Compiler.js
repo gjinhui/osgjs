@@ -36,29 +36,16 @@ module.exports = function () {
             assert.isOk( globalDecl.length > 1, 'Compiler Evaluate Global Variables output smth' );
 
             globalDecl = globalDecl.split( '\n' );
-            var hasDoublons = false;
+            var hasDuplicates = false;
             globalDecl.sort().filter( function ( item, pos ) {
-                if ( !hasDoublons && item === globalDecl[ pos - 1 ] ) hasDoublons = true;
+                if ( !hasDuplicates && item === globalDecl[ pos - 1 ] ) hasDuplicates = true;
                 return !pos || item !== globalDecl[ pos - 1 ];
             } );
-            assert.isOk( !hasDoublons, 'Compiler Evaluate Global Variables Declaration output no doublons' );
+            assert.isOk( !hasDuplicates, 'Compiler Evaluate Global Variables Declaration output no hasDuplicates' );
 
 
             globalDecl = compiler.evaluateGlobalFunctionDeclaration( root );
             assert.isOk( globalDecl.length > 1, 'Compiler Evaluate Global Functions Declaration output smth' );
-
-            /*
-             // sadly doesn't work as is for functions decl.
-             // needs glsl parsing...
-             var hasDoublons = false;
-             globalDecl.sort().filter( function ( item, pos ) {
-                if ( !hasDoublons && item === globalDecl[ pos - 1 ] ) hasDoublons = true;
-                return !pos || item !== globalDecl[ pos - 1 ];
-            } );
-
-            var globalDecl = compiler.evaluateGlobalFunctionDeclaration( root );
-            assert.isOk( !hasDoublons, 'Compiler Evaluate Global Functions Declaration output no doublons' );
-             */
 
             var nodes = nodeFactory._nodes;
             var abstractNodeList = [];
@@ -78,7 +65,7 @@ module.exports = function () {
                 }
             } );
 
-            assert.isOk( abstractNodeList.length === 2, 'Abstract Shader Node count OK. (error here means if you added an abstract node that you need to change the number here, or if you added a new node, you forgot to add a unique type for its class MANDATORY)' );
+            assert.isOk( abstractNodeList.length === 1, 'Abstract Shader Node count OK. (error here means if you added an abstract node that you need to change the number here, or if you added a new node, you forgot to add a unique type for its class MANDATORY)' );
 
             //
             var realNodeListUniq = realNodeList.sort().filter( function ( item, pos ) {

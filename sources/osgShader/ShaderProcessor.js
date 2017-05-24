@@ -240,6 +240,9 @@ ShaderProcessor.prototype = {
 
         var strCore = this.preprocess( preShader, sourceID, includeList, defines, type );
 
+        // avoid warning on unrecognized pragma
+        strCore = strCore.replace( /#pragma DECLARE_FUNCTION/g, '//#pragma DECLARE_FUNCTION' );
+
         var isFragment = strCore.indexOf( 'gl_Position' ) === -1;
         var convertToWebGL2 = WebglCaps.instance().isWebGL2();
 
@@ -262,7 +265,6 @@ ShaderProcessor.prototype = {
         if ( this._globalDefaultprecision && !this._precisionR.test( strCore ) ) {
             strPrecision = this._globalDefaultprecision + '\n';
         }
-
 
         // order is important
         // See https://khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf (p14-15: extension before any non-processor token)
