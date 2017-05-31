@@ -226,9 +226,6 @@ MACROUTILS.createPrototypeObject( RenderStage, MACROUTILS.objectInherit( RenderB
                 framebufferHeight = colorAttachment.texture.getHeight();
             }
 
-            // we should use a map in camera to avoid to regenerate the keys
-            // each time. But because we dont have a lot of camera I guess
-            // it does not change a lot
             // texture and renderbuffer must be same size.
             for ( var keyAttachment in attachments ) {
                 colorAttachment = attachments[ keyAttachment ];
@@ -267,12 +264,25 @@ MACROUTILS.createPrototypeObject( RenderStage, MACROUTILS.objectInherit( RenderB
         if ( this.viewport === undefined ) {
             Notify.log( 'RenderStage does not have a valid viewport' );
         }
-        state.applyAttribute( this.viewport );
 
         // fragment clipping
+
         if ( this.camera ) {
+
             var scissor = this.camera.getStateSet() && this.camera.getStateSet().getAttribute( 'Scissor' );
-            if ( scissor ) state.applyAttribute( scissor );
+            if ( scissor ) {
+
+                state.applyAttribute( scissor );
+
+            } else {
+
+                gl.scissor( this.viewport.x(),
+                    this.viewport.y(),
+                    this.viewport.width(),
+                    this.viewport.height() );
+                gl.enable( gl.SCISSOR_TEST, true );
+
+            }
         }
 
         /*jshint bitwise: false */
